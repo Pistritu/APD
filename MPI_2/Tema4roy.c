@@ -1,3 +1,7 @@
+Matricea costurilor optime
+
+
+
 #include "mpi.h"
 #include <iostream>
 using namespace std;
@@ -7,12 +11,12 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 	int a[N][N] = {
-		{ 0, 2, 5, 999, 999, 999 },
-		{ 999, 0, 7, 1, 999, 8 },
-		{ 999, 999, 0, 4, 999, 999 },
+		{ 1, 2, 5, 979, 999, 999 },
+		{ 999, 12, 4, 2, 999, 3 },
+		{ 999, 999, 0, 8, 999, 999 },
 		{ 999, 999, 999, 0, 3, 999 },
-		{ 999, 999, 2, 999, 0, 3 },
-		{ 999, 5, 999, 2, 4, 0 }
+		{ 999, 999, 2, 999, 8, 3 },
+		{ 999, 5, 999, 2, 0,8 }
 	};
 	int result[N][N];
 	int numprocs, rank;
@@ -21,11 +25,7 @@ int main(int argc, char *argv[])
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 
-	/*if (rank == 0){
-		MPI_Bcast(a, N*N, MPI_INT, 0, MPI_COMM_WORLD);
-	}*/
-
-	//MPI_Barrier(MPI_COMM_WORLD);
+	
 
 	for (int k = 0; k < N; k++)
 	{
@@ -37,14 +37,13 @@ int main(int argc, char *argv[])
 					a[i][j] = a[i][k] + a[k][j];
 			}
 		}
-		//minimul din a il punem in result
+		//min a=result, matricea costurilor minime
 		MPI_Reduce(a, result, N*N, MPI_INT, MPI_MIN, 0, MPI_COMM_WORLD);
 		if (rank == 0) {
 			for (int i = 0; i < N; i++)
 				for (int j = 0; j < N; j++)
 					a[i][j] = result[i][j];
 			MPI_Bcast(a, N*N, MPI_INT, 0, MPI_COMM_WORLD);
-			//a buffer, N*N size of the data buffer, mpi data type, 0 root – sender, MPI_COMM_WORLD-comunicator
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
 	}

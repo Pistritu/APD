@@ -22,7 +22,10 @@ int main(int argc, char *argv[])
 	piece = SIZE / numProcs;
 	if (SIZE % numProcs != 0)
 		++piece;
-
+	
+	
+//Blochează procesul curent până cand toate celelalte procese din comunicatorul actual au ajuns la această rutină.
+//parametru -comm :Comunicatorul folosit în comunicarea colectivă
 	MPI_Barrier(MPI_COMM_WORLD);
 
 	if (rank == 0)
@@ -35,7 +38,14 @@ int main(int argc, char *argv[])
 			finalFound[i] = -1;
 		}
 	}
+	
+	
 	//trimite bucati egale de date de la root catre toate procesele din com
+	/*
+	Procesul rădăcină trimite date de dimensiune egală în memoria tampon 
+	de aplicație tuturor celorlalte procese din comunicator. 
+	Fiecare proces va fi trimis unui alt segment de date.
+	*/
 	MPI_Scatter(array, piece, MPI_INT, segment, piece, MPI_INT, 0, MPI_COMM_WORLD);
 	cout << "\n\nRank " << rank << " Piece size: " << piece << "\n";
 
@@ -50,6 +60,12 @@ int main(int argc, char *argv[])
 			found[++index] = i + rank * piece;
 		}
 	}
+	
+	
+	/*
+	Procesul rădăcină adună date din toate celelalte procese și îl plasează într-un buffer 
+	de primire comandat de către Expeditorului.
+	*/
 	//ia  rez de la toate procesele si le pune in vectorul finalFound
 	MPI_Gather(found, piece, MPI_INT, finalFound, piece, MPI_INT, 0, MPI_COMM_WORLD);
 
