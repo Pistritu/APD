@@ -76,7 +76,12 @@ int main(int argc, char *argv[])
 		SendData = parte;
 		for (i = 1; i < nrProcesses; i++)
 		{
-		
+		//int MPI_Send(void *buf -Datele care trebuie trimise / primite (tampon aplicație). 
+		//int count -(Dimensiunea (numărul de elemente) a tamponului care trebuie trimis / primit.) 
+		//MPI_Datatype datatype, -Una dintre următoarele valori
+		//int dest -(Rangul proceselor receptorului) , 
+		//int tag -(eticheta mesajului primire/trimitere(+-), 
+		//MPI_Comm comm)
 			MPI_Send(&SendData, 1, MPI_INT, i, 1, MPI_COMM_WORLD);   //trimite date
 		}
 
